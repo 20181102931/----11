@@ -1,55 +1,201 @@
 #include<stdio.h>
 #include<stdlib.h>
-//判断栈是否满，满存在队列里；
-//车出去移动到另一个栈里面，队列不移动
-//停回去时候d队列需要出队列，移动到栈里面
-//元素出栈也要记录；
-
-typedef int ElemType;
-typedef struct QNode  //结点结构
+struct Infor
+{
+    char a;
+    int number;
+    int time;
+};
+typedef struct SNode *PtrToSNode;
+struct SNode
+{
+    Infor *data;
+    int MaxSize ;
+    int Top;
+};
+typedef PtrToSNode Stack;
+struct QNode
 {
     Infor data;
     struct QNode *next;
-}QNode;
-typedef struct
+};
+typedef struct QNode *Position;
+struct LinkQueue
 {
     QNode *Front,*Rear;
-}LinkQueue;
-LinkQueue *CreatQueue(LinkQueue *q)
+};
+typedef struct LinkQueue *Queue;
+Queue CreatQueue( )
 {
-
+    
+    Queue q=(Queue)malloc(sizeof(struct LinkQueue));
     q->Front=q->Rear=(QNode*)malloc(sizeof(QNode));
     q->Front->next=NULL;
     return q;
 }
-//判断栈满不满,不满的话缺少几个
-void InQueue(LinkQueue *q,Infor e)//元素要入队列了
+Stack Creatstack(int MaxSize)
+{
+    Stack s=(Stack)malloc(sizeof(struct SNode));
+    s->data=(Infor *)malloc(MaxSize*sizeof(Infor));
+    s->Top=-1;
+    s->MaxSize=MaxSize;
+    return s;
+}
+bool IsFull(Stack S){
+    return(S->Top == S->MaxSize-1);
+}
+void Push(Stack S,Infor x)
+{
+    if(IsFull(S)){
+        printf("≥µŒª“—¬˙\n");
+        return;
+    }
+    S->data[++(S->Top)]=x;
+    printf("≥µ¡æ»Î’æ≥…π¶\n");
+    return;
+}
+bool IsEmpty(Stack s)
+{
+    return (s->Top ==-1);
+}
+Infor GetTop(Stack S)
+{
+    Infor c;
+    c=S->data[S->Top];
+    return c;
+}
+
+void Pop(Stack S,Stack T,Infor g)
+{
+    Infor h;
+    int price;
+    if(IsEmpty(S))
+    {
+        price=5*(g.time-S->data[1].time);
+        printf("ª∂”≠ƒ˙¿¥Õ£≥µ£¨±æ¥ŒÕ£≥µ∑—”√:%d\n",price);
+        printf("Õ£≥µ≥°Œ¥”–≥µ¡æÕ£∑≈\n");
+        return ;
+    } else
+    {
+        for(int i=S->Top;i>-1;i--)
+        {
+            if(S->data[i].number==g.number)// «¿Îø™µƒ≥µ
+            {
+                price=5*(g.time-S->data[i].time);
+                printf("%d",S->data[i].time);
+                printf("ª∂”≠ƒ˙¿¥Õ£≥µ£¨±æ¥ŒÕ£≥µ∑—”√:%d\n",price);
+                S->data[(S->Top)--];
+            }else//≤ª «¿Îø™µƒ≥µ
+            {
+                h=GetTop(S);
+                Push(T,h);
+                S->data[(S->Top)--];
+            }
+        }
+    }
+    
+}
+void Output(Stack T,Stack S)//µ⁄∂˛∏ˆ’ª∞—‘™Àÿ∑≈ªÿ»•
+{
+    if(IsEmpty(T))
+    {
+        return;
+    }
+    else
+    {
+        for(int i=T->Top;i>-1;i--)
+        {
+            Push(S,T->data[i]);
+            T->data[(T->Top)--];
+        }
+    }
+}
+Queue InQueue(Queue q,Infor e)//‘™Àÿ“™»Î∂”¡–¡À
 {
     QNode *p=(QNode*)malloc(sizeof(QNode));
     if(!p)
     {
-        printf("失败");
+        printf(" ß∞‹");
     }else
     {
-        p->data = e; //入队的元素是剩下的元素
+        p->data = e; //»Î∂”µƒ‘™Àÿ « £œ¬µƒ‘™Àÿ
         p->next =NULL;
         q->Rear->next=p;
         q->Rear=p;
+        printf("≥…π¶»Î∂”¡–\n");
     }
+    return q;
 }
-void OutQueue(LinkQueue *q)//栈里有车出来的话，元素出队，去补足栈里的元素
+void OutQueue(Queue q,Stack S)//’ª¿Ô”–≥µ≥ˆ¿¥µƒª∞£¨‘™Àÿ≥ˆ∂”£¨»•≤π◊„’ª¿Ôµƒ‘™Àÿ
 {
+    
     QNode *h;
-    ElemType w;
+    Infor w;
     if(q->Front == q->Rear)
-      {
-          printf("便道已经没有可以进入停车场的车辆了");
-      }else
-       {
-           h=q->Front->next; //元素保存，需要传给栈
-           w=h->data;
-           Push(S,h->data);
-           q->Front->next=h->next;//元素删除
-       }
+    {
+        printf("±„µ¿“—æ≠√ª”–ø…“‘Ω¯»ÎÕ£≥µ≥°µƒ≥µ¡æ¡À");
+    }else
+    {
+        h=q->Front->next; //‘™Àÿ±£¥Ê£¨–Ë“™¥´∏¯’ª
+        w=h->data;
+        printf("‘™Àÿ≥ˆ∂”\n");
+        Push(S,h->data);
+        q->Front->next=h->next;//‘™Àÿ…æ≥˝
+        
+    }
     free(h);
 }
+int main()
+{
+    Infor x,d;
+    Stack S,T;
+    Queue q=CreatQueue();
+    int n,i=0,b;
+    printf("Õ£≥µ≥°Õ£∑≈◊‹≥µ¡æ£∫ ");
+    scanf("%d",&n);
+    S = Creatstack(n);
+    T = Creatstack(n);
+    printf("≥µ¡æ–≈œ¢ ‰»Î£∫\n");
+    x.a='c';
+    while(x.a!='p')
+    {
+        if(i<n)
+        { getchar();
+            scanf("%c",&x.a);
+            scanf("%d",&x.number);
+            scanf("%d",&x.time);
+            Push(S,x);
+            i++;
+        }
+        if(i>=n)
+        {
+            getchar();
+            scanf("%c",&x.a);
+            if(x.a=='p')
+            {
+                break;
+            }
+            scanf("%d",&x.number);
+            scanf("%d",&x.time);
+            InQueue(q,x);
+            i++;
+        }
+    }
+    printf("¿Îø™µƒ≥µ¡æ ˝ƒø");
+    scanf("%d",&b);
+    printf("¿Îø™µƒ≥µ¡æ–≈œ¢\n");
+    for(int i=0;i<b;i++)
+    {
+        getchar();
+        scanf("%c",&d.a);
+        scanf("%d %d",&d.number,&d.time);
+        Pop(S,T,d);
+    }
+    Output(T,S);
+    for(int j=0;j<b;j++)
+    {
+        OutQueue(q,S);
+    }
+    return 0;
+}
+
